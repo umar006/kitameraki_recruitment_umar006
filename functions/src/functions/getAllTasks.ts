@@ -19,7 +19,9 @@ export async function getAllTasks(
   if (!connectionString) {
     return {
       status: 500,
-      body: "CosmosDB connection string is missing.",
+      jsonBody: {
+        error: "CosmosDB connection string is missing.",
+      },
     };
   }
   const client = new CosmosClient(connectionString);

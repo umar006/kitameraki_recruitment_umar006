@@ -6,6 +6,7 @@ import {
   InvocationContext,
 } from "@azure/functions";
 import { config } from "../config";
+import { createTaskDto } from "../dto/createTask";
 
 export async function createTask(
   request: HttpRequest,
@@ -27,7 +28,15 @@ export async function createTask(
   const container = db.container(containerId);
 
   const body = await request.json();
-  const { resource } = await container.items.create(body);
+  const result = createTaskDto.safeParse(body);
+  if (!result.success) {
+    return {
+      status: 400,
+      jsonBody: result.error.flatten().fieldErrors,
+    };
+  }
+
+  const { resource } = await container.items.create(result.data);
 
   return {
     status: 201,
