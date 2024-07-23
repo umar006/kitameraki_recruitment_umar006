@@ -6,9 +6,8 @@ import {
   InvocationContext,
 } from "@azure/functions";
 import { config } from "../config";
-import { createTaskDto } from "../dto/createTask";
 
-export async function createTask(
+export async function deleteTask(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
@@ -29,26 +28,26 @@ export async function createTask(
   const db = client.database(dbId);
   const container = db.container(containerId);
 
-  const body = await request.json();
-  const result = createTaskDto.safeParse(body);
-  if (!result.success) {
+  const taskId = request.params.id;
+  if (!taskId) {
     return {
-      status: 400,
-      jsonBody: result.error.flatten().fieldErrors,
+      status: 404,
+      jsonBody: {
+        error: "Task not found",
+      },
     };
   }
 
-  const { resource } = await container.items.create(result.data);
+  await container.item(taskId).delete();
 
   return {
-    status: 201,
-    jsonBody: resource,
+    status: 204,
   };
 }
 
-app.http("createTask", {
-  methods: ["POST"],
-  route: "tasks",
+app.http("deleteTask", {
+  methods: ["DELETE"],
+  route: "tasks/{id}",
   authLevel: "anonymous",
-  handler: createTask,
+  handler: deleteTask,
 });
