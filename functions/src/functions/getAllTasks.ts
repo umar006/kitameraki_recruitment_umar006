@@ -1,4 +1,4 @@
-import { CosmosClient, SqlQuerySpec } from "@azure/cosmos";
+import { CosmosClient } from "@azure/cosmos";
 import {
   HttpRequest,
   HttpResponseInit,
@@ -27,11 +27,7 @@ export async function getAllTasks(
   const db = client.database(dbId);
   const container = db.container(containerId);
 
-  const query: SqlQuerySpec = {
-    query: "SELECT * FROM TasksUmar",
-  };
-
-  const { resources } = await container.items.query(query).fetchAll();
+  const { resources } = await container.items.readAll().fetchAll();
 
   return { status: 200, jsonBody: resources };
 }
