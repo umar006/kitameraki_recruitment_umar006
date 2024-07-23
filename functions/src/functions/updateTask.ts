@@ -1,6 +1,5 @@
 import { CosmosClient, PatchOperation } from "@azure/cosmos";
 import {
-  app,
   HttpRequest,
   HttpResponseInit,
   InvocationContext,
@@ -65,10 +64,3 @@ export async function updateTask(
     jsonBody: resource,
   };
 }
-
-app.http("updateTask", {
-  methods: ["PATCH"],
-  route: "tasks/{id}",
-  authLevel: "anonymous",
-  handler: updateTask,
-});

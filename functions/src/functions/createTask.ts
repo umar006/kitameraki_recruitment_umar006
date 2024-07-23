@@ -1,6 +1,5 @@
 import { CosmosClient } from "@azure/cosmos";
 import {
-  app,
   HttpRequest,
   HttpResponseInit,
   InvocationContext,
@@ -45,10 +44,3 @@ export async function createTask(
     jsonBody: resource,
   };
 }
-
-app.http("createTask", {
-  methods: ["POST"],
-  route: "tasks",
-  authLevel: "anonymous",
-  handler: createTask,
-});

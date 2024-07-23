@@ -1,6 +1,5 @@
 import { CosmosClient, SqlQuerySpec } from "@azure/cosmos";
 import {
-  app,
   HttpRequest,
   HttpResponseInit,
   InvocationContext,
@@ -36,10 +35,3 @@ export async function getAllTasks(
 
   return { status: 200, jsonBody: resources };
 }
-
-app.http("getAllTasks", {
-  methods: ["GET"],
-  route: "tasks",
-  authLevel: "anonymous",
-  handler: getAllTasks,
-});

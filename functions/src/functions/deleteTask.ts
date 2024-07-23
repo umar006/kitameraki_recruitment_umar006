@@ -1,6 +1,5 @@
 import { CosmosClient } from "@azure/cosmos";
 import {
-  app,
   HttpRequest,
   HttpResponseInit,
   InvocationContext,
@@ -44,10 +43,3 @@ export async function deleteTask(
     status: 204,
   };
 }
-
-app.http("deleteTask", {
-  methods: ["DELETE"],
-  route: "tasks/{id}",
-  authLevel: "anonymous",
-  handler: deleteTask,
-});
