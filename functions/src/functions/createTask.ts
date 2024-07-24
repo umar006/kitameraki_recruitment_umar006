@@ -37,13 +37,25 @@ export async function createTask(
     };
   }
 
-  const { resource } = await container.items.create(result.data);
+  try {
+    const { resource } = await container.items.create(result.data);
 
-  return {
-    status: 201,
-    jsonBody: {
-      id: resource.id,
-      ...result.data,
-    },
-  };
+    return {
+      status: 201,
+      jsonBody: {
+        id: resource.id,
+        ...result.data,
+      },
+    };
+  } catch (err: unknown) {
+    const error = err as Error;
+    context.error(`Error create new task: ${error.message}`);
+
+    return {
+      status: 500,
+      jsonBody: {
+        error: "Failed to create new task",
+      },
+    };
+  }
 }

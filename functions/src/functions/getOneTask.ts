@@ -39,8 +39,20 @@ export async function getOneTask(
     };
   }
 
-  const { resource } = await container.item(taskId).read<Task>();
-  const mappedTask = taskFromDb(resource);
+  try {
+    const { resource } = await container.item(taskId).read<Task>();
+    const mappedTask = taskFromDb(resource);
 
-  return { status: 200, jsonBody: mappedTask };
+    return { status: 200, jsonBody: mappedTask };
+  } catch (err: unknown) {
+    const error = err as Error;
+    context.error(`Error get task with id ${taskId}}: ${error.message}`);
+
+    return {
+      status: 500,
+      jsonBody: {
+        error: `Failed to get task with id ${taskId}`,
+      },
+    };
+  }
 }

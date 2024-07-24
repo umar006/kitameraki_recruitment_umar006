@@ -29,10 +29,22 @@ export async function getAllTasks(
   const db = client.database(dbId);
   const container = db.container(containerId);
 
-  const { resources } = await container.items
-    .readAll<Task & Resource>()
-    .fetchAll();
-  const mappedTasks = resources.map((r) => taskFromDb(r));
+  try {
+    const { resources } = await container.items
+      .readAll<Task & Resource>()
+      .fetchAll();
+    const mappedTasks = resources.map((r) => taskFromDb(r));
 
-  return { status: 200, jsonBody: mappedTasks };
+    return { status: 200, jsonBody: mappedTasks };
+  } catch (err: unknown) {
+    const error = err as Error;
+    context.error(`Error get all tasks: ${error.message}`);
+
+    return {
+      status: 500,
+      jsonBody: {
+        error: "Failed to get all tasks",
+      },
+    };
+  }
 }

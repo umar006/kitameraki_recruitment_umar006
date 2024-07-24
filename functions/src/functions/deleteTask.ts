@@ -37,9 +37,21 @@ export async function deleteTask(
     };
   }
 
-  await container.item(taskId).delete();
+  try {
+    await container.item(taskId).delete();
 
-  return {
-    status: 204,
-  };
+    return {
+      status: 204,
+    };
+  } catch (err: unknown) {
+    const error = err as Error;
+    context.error(`Error delete task with id ${taskId}: ${error.message}`);
+
+    return {
+      status: 500,
+      jsonBody: {
+        error: `Failed to delete task with id ${taskId}`,
+      },
+    };
+  }
 }

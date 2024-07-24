@@ -59,11 +59,23 @@ export async function updateTask(
     operations.push(operation);
   }
 
-  const { resource } = await container.item(taskId).patch<Task>(operations);
-  const mappedTask = taskFromDb(resource);
+  try {
+    const { resource } = await container.item(taskId).patch<Task>(operations);
+    const mappedTask = taskFromDb(resource);
 
-  return {
-    status: 200,
-    jsonBody: mappedTask,
-  };
+    return {
+      status: 200,
+      jsonBody: mappedTask,
+    };
+  } catch (err: unknown) {
+    const error = err as Error;
+    context.error(`Error update task with id ${taskId}: ${error.message}`);
+
+    return {
+      status: 500,
+      jsonBody: {
+        error: `Failed to update task with id ${taskId}`,
+      },
+    };
+  }
 }
