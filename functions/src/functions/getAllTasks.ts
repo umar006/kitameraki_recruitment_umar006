@@ -26,10 +26,7 @@ export async function getAllTasks(
       .query({
         query: "select * from TasksUmar offset @offset limit @limit",
         parameters: [
-          {
-            name: "@offset",
-            value: skip,
-          },
+          { name: "@offset", value: skip },
           { name: "@limit", value: size },
         ],
       })

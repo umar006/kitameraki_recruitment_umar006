@@ -25,6 +25,14 @@ export async function getOneTask(
 
   try {
     const { resource } = await container.item(taskId).read<Task>();
+    if (!resource) {
+      return {
+        status: 404,
+        jsonBody: {
+          error: "Task not found",
+        },
+      };
+    }
     const mappedTask = taskFromDb(resource);
 
     return { status: 200, jsonBody: mappedTask };

@@ -5,6 +5,7 @@ import {
 } from "@azure/functions";
 import { container } from "../db";
 import { createTaskDto } from "../dto/createTask";
+import { taskFromDb } from "../mapper/task";
 
 export async function createTask(
   request: HttpRequest,
@@ -23,13 +24,19 @@ export async function createTask(
 
   try {
     const { resource } = await container.items.create(result.data);
+    if (!resource) {
+      return {
+        status: 404,
+        jsonBody: {
+          error: "Task not found",
+        },
+      };
+    }
+    const mappedTask = taskFromDb(resource);
 
     return {
       status: 201,
-      jsonBody: {
-        id: resource.id,
-        ...result.data,
-      },
+      jsonBody: mappedTask,
     };
   } catch (err: unknown) {
     const error = err as Error;

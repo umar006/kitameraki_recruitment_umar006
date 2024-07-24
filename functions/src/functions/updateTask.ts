@@ -46,6 +46,14 @@ export async function updateTask(
 
   try {
     const { resource } = await container.item(taskId).patch<Task>(operations);
+    if (!resource) {
+      return {
+        status: 404,
+        jsonBody: {
+          error: "Task not found",
+        },
+      };
+    }
     const mappedTask = taskFromDb(resource);
 
     return {
