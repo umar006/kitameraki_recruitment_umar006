@@ -5,6 +5,8 @@ import {
   InvocationContext,
 } from "@azure/functions";
 import { config } from "../config";
+import { taskFromDb } from "../mapper/task";
+import { Task } from "../schema/task";
 
 export async function getOneTask(
   request: HttpRequest,
@@ -37,7 +39,8 @@ export async function getOneTask(
     };
   }
 
-  const { resource } = await container.item(taskId).read();
+  const { resource } = await container.item(taskId).read<Task>();
+  const mappedTask = taskFromDb(resource);
 
-  return { status: 200, jsonBody: resource };
+  return { status: 200, jsonBody: mappedTask };
 }

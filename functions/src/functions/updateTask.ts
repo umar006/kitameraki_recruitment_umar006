@@ -6,6 +6,8 @@ import {
 } from "@azure/functions";
 import { config } from "../config";
 import { updateTaskDto } from "../dto/updateTask";
+import { taskFromDb } from "../mapper/task";
+import { Task } from "../schema/task";
 
 export async function updateTask(
   request: HttpRequest,
@@ -57,10 +59,11 @@ export async function updateTask(
     operations.push(operation);
   }
 
-  const { resource } = await container.item(taskId).patch(operations);
+  const { resource } = await container.item(taskId).patch<Task>(operations);
+  const mappedTask = taskFromDb(resource);
 
   return {
     status: 200,
-    jsonBody: resource,
+    jsonBody: mappedTask,
   };
 }

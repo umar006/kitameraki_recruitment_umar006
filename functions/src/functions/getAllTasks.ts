@@ -1,10 +1,12 @@
-import { CosmosClient } from "@azure/cosmos";
+import { CosmosClient, Resource } from "@azure/cosmos";
 import {
   HttpRequest,
   HttpResponseInit,
   InvocationContext,
 } from "@azure/functions";
 import { config } from "../config";
+import { taskFromDb } from "../mapper/task";
+import { Task } from "../schema/task";
 
 export async function getAllTasks(
   request: HttpRequest,
@@ -27,7 +29,10 @@ export async function getAllTasks(
   const db = client.database(dbId);
   const container = db.container(containerId);
 
-  const { resources } = await container.items.readAll().fetchAll();
+  const { resources } = await container.items
+    .readAll<Task & Resource>()
+    .fetchAll();
+  const mappedTasks = resources.map((r) => taskFromDb(r));
 
-  return { status: 200, jsonBody: resources };
+  return { status: 200, jsonBody: mappedTasks };
 }

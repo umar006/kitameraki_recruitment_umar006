@@ -41,6 +41,9 @@ export async function createTask(
 
   return {
     status: 201,
-    jsonBody: resource,
+    jsonBody: {
+      id: resource.id,
+      ...result.data,
+    },
   };
 }
