@@ -1,4 +1,4 @@
-import { CosmosClient, Resource } from "@azure/cosmos";
+import { CosmosClient } from "@azure/cosmos";
 import {
   HttpRequest,
   HttpResponseInit,
@@ -6,7 +6,6 @@ import {
 } from "@azure/functions";
 import { config } from "../config";
 import { taskFromDb } from "../mapper/task";
-import { Task } from "../schema/task";
 
 export async function getAllTasks(
   request: HttpRequest,
@@ -29,9 +28,27 @@ export async function getAllTasks(
   const db = client.database(dbId);
   const container = db.container(containerId);
 
+  let page = Number(request.query.get("page"));
+  if (isNaN(page) || page < 1) page = 1;
+
+  let size = Number(request.query.get("size"));
+  if (isNaN(size) || size < 1) size = 10;
+
+  // calculate offset
+  const skip = (page - 1) * size;
+
   try {
     const { resources } = await container.items
-      .readAll<Task & Resource>()
+      .query({
+        query: "select * from TasksUmar offset @offset limit @limit",
+        parameters: [
+          {
+            name: "@offset",
+            value: skip,
+          },
+          { name: "@limit", value: size },
+        ],
+      })
       .fetchAll();
     const mappedTasks = resources.map((r) => taskFromDb(r));
 
