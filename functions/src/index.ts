@@ -7,35 +7,35 @@ import { updateTask } from "./functions/updateTask";
 
 app.http("getAllTasks", {
   methods: ["GET"],
-  route: "tasks",
+  route: "v1/tasks",
   authLevel: "anonymous",
   handler: getAllTasks,
 });
 
 app.http("createTask", {
   methods: ["POST"],
-  route: "tasks",
+  route: "v1/tasks",
   authLevel: "anonymous",
   handler: createTask,
 });
 
 app.http("updateTask", {
   methods: ["PATCH"],
-  route: "tasks/{id}",
+  route: "v1/tasks/{id}",
   authLevel: "anonymous",
   handler: updateTask,
 });
 
 app.http("deleteTask", {
   methods: ["DELETE"],
-  route: "tasks/{id}",
+  route: "v1/tasks/{id}",
   authLevel: "anonymous",
   handler: deleteTask,
 });
 
 app.http("getOneTasks", {
   methods: ["GET"],
-  route: "tasks/{id}",
+  route: "v1/tasks/{id}",
   authLevel: "anonymous",
   handler: getOneTask,
 });
