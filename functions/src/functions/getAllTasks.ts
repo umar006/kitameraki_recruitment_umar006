@@ -15,11 +15,11 @@ export async function getAllTasks(
   let page = Number(request.query.get("page"));
   if (isNaN(page) || page < 1) page = 1;
 
-  let size = Number(request.query.get("size"));
-  if (isNaN(size) || size < 1) size = 10;
+  let limit = Number(request.query.get("limit"));
+  if (isNaN(limit) || limit < 1) limit = 10;
 
   // calculate offset
-  const skip = (page - 1) * size;
+  const skip = (page - 1) * limit;
 
   try {
     const { resources } = await container.items
@@ -27,7 +27,7 @@ export async function getAllTasks(
         query: "select * from TasksUmar offset @offset limit @limit",
         parameters: [
           { name: "@offset", value: skip },
-          { name: "@limit", value: size },
+          { name: "@limit", value: limit },
         ],
       })
       .fetchAll();
